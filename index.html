@@ -757,43 +757,38 @@
       <!-- AI Detected Results Box -->
       <div id="scanner-results-box" class="scanner-results-container" style="display: none;">
         <div class="scanner-results-header">
-          <span class="scan-success-badge">✓ 98% AI Vision Confidence</span>
-          <h3>AI Detected Information</h3>
+          <span class="scan-success-badge">✓ AI Vision Match: 98% Confidence</span>
+          <button type="button" class="scanner-reset-link" onclick="resetScanner()">🔄 Scan Another</button>
         </div>
 
-        <div class="detected-fields-grid">
-          <div class="detected-field">
-            <span class="detected-label">📦 Item Name</span>
-            <strong id="det-name" class="detected-val">Apple AirPods Pro 2nd Gen Case</strong>
+        <div class="detected-top-card">
+          <div class="detected-img-wrap">
+            <img id="det-img-preview" src="assets/airpods_lost.jpg" alt="Detected Item">
           </div>
-          <div class="detected-field">
-            <span class="detected-label">📁 Category</span>
-            <strong id="det-cat" class="detected-val">Electronics</strong>
-          </div>
-          <div class="detected-field">
-            <span class="detected-label">🏷️ Brand</span>
-            <strong id="det-brand" class="detected-val">Apple</strong>
-          </div>
-          <div class="detected-field">
-            <span class="detected-label">🎨 Color</span>
-            <strong id="det-color" class="detected-val">White</strong>
+          <div class="detected-main-info">
+            <span class="detected-badge-tag" id="det-cat-tag">Electronics</span>
+            <h3 id="det-name" class="detected-main-title">Apple AirPods Pro 2nd Gen Case</h3>
+            <div class="detected-mini-chips">
+              <span class="det-pill">🏷️ Brand: <strong id="det-brand">Apple</strong></span>
+              <span class="det-pill">🎨 Color: <strong id="det-color">White</strong></span>
+            </div>
           </div>
         </div>
 
-        <div class="detected-field full-width">
-          <span class="detected-label">📝 Detected Features / Markings</span>
-          <span id="det-notes" class="detected-val-text">Wireless charging case with front LED status light and lanyard loop.</span>
+        <div class="detected-notes-box">
+          <span class="detected-label">📝 AI Detected Details / Features:</span>
+          <p id="det-notes" class="detected-val-text">Wireless charging case with front LED status light and lanyard loop.</p>
         </div>
 
-        <div class="scanner-choice-heading">Select what you want to report:</div>
+        <div class="scanner-choice-heading">Where should we add this item?</div>
         <div class="scanner-choice-buttons">
           <button type="button" class="btn btn-yellow choice-btn" onclick="confirmScanAndProceed('lost')">
             <span style="font-size: 1.1rem;">🔴</span>
-            <span>Confirm & Report Lost</span>
+            <span>Confirm as Lost Item</span>
           </button>
           <button type="button" class="btn btn-green choice-btn" onclick="confirmScanAndProceed('found')">
             <span style="font-size: 1.1rem;">🟢</span>
-            <span>Confirm & Report Found</span>
+            <span>Confirm as Found Item</span>
           </button>
         </div>
       </div>

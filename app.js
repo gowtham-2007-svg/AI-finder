@@ -1322,14 +1322,22 @@ let currentScanResult = null;
 function openScanModal() {
   const modal = document.getElementById('scan-modal');
   if (!modal) return;
+  resetScanner();
+  modal.classList.add('active');
+}
 
-  // Reset scanner state
+function resetScanner() {
   const animBox = document.getElementById('scanner-animation-box');
   const resultsBox = document.getElementById('scanner-results-box');
+  const dropzone = document.getElementById('scanner-dropzone');
+  const samplesGroup = document.getElementById('scanner-samples-group');
   const preview = document.getElementById('scanner-preview');
 
   if (animBox) animBox.style.display = 'none';
   if (resultsBox) resultsBox.style.display = 'none';
+  if (dropzone) dropzone.style.display = 'block';
+  if (samplesGroup) samplesGroup.style.display = 'block';
+
   if (preview) {
     preview.innerHTML = `
       <div class="scanner-camera-icon">
@@ -1342,9 +1350,7 @@ function openScanModal() {
       <span>AI automatically detects and auto-fills item details</span>
     `;
   }
-
   currentScanResult = null;
-  modal.classList.add('active');
 }
 
 function handleScannerImageUpload(event) {
@@ -1393,6 +1399,8 @@ function simulateScanSample(sampleKey) {
 function runAIVisionAnalysis(data) {
   const animBox = document.getElementById('scanner-animation-box');
   const resultsBox = document.getElementById('scanner-results-box');
+  const dropzone = document.getElementById('scanner-dropzone');
+  const samplesGroup = document.getElementById('scanner-samples-group');
   const fill = document.getElementById('scanner-bar-fill');
   const pct = document.getElementById('scanner-status-pct');
   const statusText = document.getElementById('scanner-status-text');
@@ -1409,9 +1417,9 @@ function runAIVisionAnalysis(data) {
   ];
 
   const interval = setInterval(() => {
-    progress += 6;
-    if (fill) fill.style.width = `${progress}%`;
-    if (pct) pct.innerText = `${progress}%`;
+    progress += 8;
+    if (fill) fill.style.width = `${Math.min(progress, 100)}%`;
+    if (pct) pct.innerText = `${Math.min(progress, 100)}%`;
 
     const stepIdx = Math.min(Math.floor((progress / 100) * steps.length), steps.length - 1);
     if (statusText) statusText.innerText = steps[stepIdx];
@@ -1420,24 +1428,37 @@ function runAIVisionAnalysis(data) {
       clearInterval(interval);
       setTimeout(() => {
         if (animBox) animBox.style.display = 'none';
+        if (dropzone) dropzone.style.display = 'none';
+        if (samplesGroup) samplesGroup.style.display = 'none';
 
         // Display results
         currentScanResult = data;
-        document.getElementById('det-name').innerText = data.title;
-        document.getElementById('det-cat').innerText = data.category;
-        document.getElementById('det-brand').innerText = data.brand;
-        document.getElementById('det-color').innerText = data.color;
-        document.getElementById('det-notes').innerText = data.notes;
+        
+        const imgEl = document.getElementById('det-img-preview');
+        const nameEl = document.getElementById('det-name');
+        const catTagEl = document.getElementById('det-cat-tag');
+        const brandEl = document.getElementById('det-brand');
+        const colorEl = document.getElementById('det-color');
+        const notesEl = document.getElementById('det-notes');
+
+        if (imgEl) imgEl.src = data.image;
+        if (nameEl) nameEl.innerText = data.title;
+        if (catTagEl) catTagEl.innerText = data.category;
+        if (brandEl) brandEl.innerText = data.brand;
+        if (colorEl) colorEl.innerText = data.color;
+        if (notesEl) notesEl.innerText = data.notes;
 
         if (resultsBox) {
           resultsBox.style.display = 'block';
-          resultsBox.scrollIntoView({ behavior: 'smooth' });
         }
 
+        const modalCard = document.querySelector('#scan-modal .modal-card');
+        if (modalCard) modalCard.scrollTo({ top: 0, behavior: 'smooth' });
+
         showToast(`✨ AI detected: ${data.title} (${data.color}, ${data.brand})`);
-      }, 300);
+      }, 250);
     }
-  }, 35);
+  }, 30);
 }
 
 function confirmScanAndProceed(type) {
