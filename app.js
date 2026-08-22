@@ -18,7 +18,7 @@ let campusInventory = [
     image: 'assets/airpods_found.jpg',
     notes: 'Found left on study table 14 with charging cable.',
     userName: 'Security Desk',
-    whatsapp: '919876543210'
+    whatsapp: '919019984669'
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ let campusInventory = [
     image: 'assets/airpods_lost.jpg',
     notes: 'Lost white case with small scratch on bottom hinge.',
     userName: 'Kavya S.',
-    whatsapp: '919876543211'
+    whatsapp: '919019984669'
   },
   {
     id: 3,
@@ -50,7 +50,7 @@ let campusInventory = [
     image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=60',
     notes: 'Has a small sticker of a mountain peak on the side.',
     userName: 'Cafe Counter Staff',
-    whatsapp: '919876543212'
+    whatsapp: '919019984669'
   },
   {
     id: 4,
@@ -66,7 +66,7 @@ let campusInventory = [
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
     notes: 'Contains notebooks and calculus study guides.',
     userName: 'Rohan Mehta',
-    whatsapp: '919876543213'
+    whatsapp: '919019984669'
   },
   {
     id: 5,
@@ -82,7 +82,7 @@ let campusInventory = [
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&auto=format&fit=crop&q=60',
     notes: 'Handed to Canteen cashier desk.',
     userName: 'Canteen Cashier',
-    whatsapp: '919876543214'
+    whatsapp: '919019984669'
   },
   {
     id: 6,
@@ -98,7 +98,7 @@ let campusInventory = [
     image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&auto=format&fit=crop&q=60',
     notes: 'Black frame in brown leather case.',
     userName: 'Gym Staff',
-    whatsapp: '919876543215'
+    whatsapp: '919019984669'
   },
   {
     id: 7,
@@ -114,7 +114,7 @@ let campusInventory = [
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
     notes: 'Has coding stickers on top cover.',
     userName: 'Vikram S.',
-    whatsapp: '919876543216'
+    whatsapp: '919019984669'
   },
   {
     id: 8,
@@ -130,7 +130,7 @@ let campusInventory = [
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
     notes: 'Secured at Campus Main Gate Security Hub.',
     userName: 'Main Security Hub',
-    whatsapp: '919876543217'
+    whatsapp: '919019984669'
   }
 ];
 
@@ -700,8 +700,16 @@ function openWhatsAppChat(itemId) {
   const item = campusInventory.find(i => i.id === itemId);
   if (!item) return;
 
-  const rawNumber = item.whatsapp || '919876543210';
-  const cleanNumber = rawNumber.replace(/[^\d]/g, '');
+  // Use 9019984669 with India country code 91 by default
+  let rawNumber = item.whatsapp || '9019984669';
+  let cleanNumber = rawNumber.replace(/[^\d]/g, '');
+  if (cleanNumber.length === 10) {
+    cleanNumber = '91' + cleanNumber;
+  }
+  if (!cleanNumber) {
+    cleanNumber = '919019984669';
+  }
+
   const isLost = item.type === 'lost';
 
   const message = encodeURIComponent(
