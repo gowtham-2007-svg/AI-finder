@@ -38,14 +38,16 @@
       <nav class="nav-menu">
         <a href="#home" class="nav-link active" id="nav-home" onclick="setActiveNav('home')">Home</a>
         <a href="#directory-section" class="nav-link" id="nav-lost-items" onclick="viewLostItems()">
-          Lost Items <span class="nav-count-pill pill-lost" id="nav-count-lost">0</span>
+          <span>Lost Items</span>
+          <span class="nav-count-pill pill-lost" id="nav-count-lost">0</span>
         </a>
         <a href="#directory-section" class="nav-link" id="nav-found-items" onclick="viewFoundItems()">
-          Found Items <span class="nav-count-pill pill-found" id="nav-count-found">0</span>
+          <span>Found Items</span>
+          <span class="nav-count-pill pill-found" id="nav-count-found">0</span>
         </a>
-        <a href="#report-lost" class="nav-link" id="nav-report-lost" onclick="openLostModal()">Report Lost</a>
-        <a href="#report-found" class="nav-link" id="nav-report-found" onclick="openFoundModal()">Report Found</a>
-        <a href="#search" class="nav-link" id="nav-search" onclick="openSearchModal()">Search AI</a>
+        <a href="#directory-section" class="nav-link" id="nav-matches" onclick="switchDirectoryTab('matches'); scrollToSection('directory-section');">
+          <span>AI Matches</span>
+        </a>
         <a href="#how-it-works" class="nav-link" id="nav-how" onclick="scrollToSection('how-it-works')">How It Works</a>
         <a href="#faq" class="nav-link" id="nav-faq" onclick="scrollToSection('faq-section')">FAQ</a>
       </nav>
@@ -93,16 +95,112 @@
           </div>
         </div>
 
-        <button class="btn btn-yellow pill-btn" onclick="openLostModal()">
-          Get Started 
+        <button class="btn btn-yellow pill-btn header-get-started" onclick="openScanModal()">
+          📷 Scan Item 
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
         </button>
+
+        <!-- Mobile Menu Hamburger Button -->
+        <button type="button" class="icon-btn mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Menu" onclick="toggleMobileMenu()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Slide-out Navigation Drawer -->
+  <div id="mobile-drawer-overlay" class="mobile-drawer-overlay" onclick="toggleMobileMenu()"></div>
+  <div id="mobile-nav-drawer" class="mobile-nav-drawer">
+    <div class="mobile-drawer-header">
+      <div class="logo-group" onclick="switchTab('home'); toggleMobileMenu();" style="cursor: pointer;">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="#000000" stroke-width="2.5"/>
+            <path d="M16 16L20 20" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="brand-name">CampusFind <span class="brand-ai">AI</span></span>
+      </div>
+      <button class="mobile-drawer-close" onclick="toggleMobileMenu()">&times;</button>
+    </div>
+
+    <!-- 3 Clear Options in Mobile Drawer -->
+    <div class="mobile-drawer-actions">
+      <button class="btn btn-purple mobile-action-btn" onclick="openScanModal(); toggleMobileMenu();">
+        📷 Scan Item AI
+      </button>
+      <button class="btn btn-yellow mobile-action-btn" onclick="openLostModal(); toggleMobileMenu();">
+        🔴 Report Lost Item
+      </button>
+      <button class="btn btn-green mobile-action-btn" onclick="openFoundModal(); toggleMobileMenu();">
+        🟢 Report Found Item
+      </button>
+    </div>
+
+    <div class="mobile-drawer-links">
+      <a href="#home" class="mobile-nav-link" onclick="setActiveNav('home'); toggleMobileMenu();">
+        <span>🏠 Home</span>
+      </a>
+      <a href="#directory-section" class="mobile-nav-link" onclick="viewLostItems(); toggleMobileMenu();">
+        <span>🔴 Lost Items</span>
+        <span class="nav-count-pill pill-lost" id="drawer-count-lost">0</span>
+      </a>
+      <a href="#directory-section" class="mobile-nav-link" onclick="viewFoundItems(); toggleMobileMenu();">
+        <span>🟢 Found Items</span>
+        <span class="nav-count-pill pill-found" id="drawer-count-found">0</span>
+      </a>
+      <a href="#directory-section" class="mobile-nav-link" onclick="switchDirectoryTab('matches'); scrollToSection('directory-section'); toggleMobileMenu();">
+        <span>🤖 AI Smart Matches</span>
+        <span class="nav-count-pill" style="background:#F3E8FF; color:#7E22CE;" id="drawer-count-matches">0</span>
+      </a>
+      <a href="#search" class="mobile-nav-link" onclick="openSearchModal(); toggleMobileMenu();">
+        <span>🔍 Search Database</span>
+      </a>
+      <a href="#how-it-works" class="mobile-nav-link" onclick="scrollToSection('how-it-works'); toggleMobileMenu();">
+        <span>💡 How It Works</span>
+      </a>
+      <a href="#faq" class="mobile-nav-link" onclick="scrollToSection('faq-section'); toggleMobileMenu();">
+        <span>❓ FAQ</span>
+      </a>
+      <a href="javascript:void(0)" class="mobile-nav-link" onclick="openShareModal(); toggleMobileMenu();">
+        <span>🔗 Share Campus App</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Fixed Bottom Navigation Bar -->
+  <nav class="mobile-bottom-bar">
+    <button class="bottom-bar-item active" id="bbar-home" onclick="setActiveNav('home'); switchTab('home');">
+      <span class="bbar-icon">🏠</span>
+      <span class="bbar-label">Home</span>
+    </button>
+
+    <button class="bottom-bar-item" id="bbar-lost" onclick="viewLostItems();">
+      <span class="bbar-icon">🔴</span>
+      <span class="bbar-label">Lost (<span id="bbar-count-lost">0</span>)</span>
+    </button>
+
+    <button class="bottom-bar-center-btn" onclick="openScanModal()" aria-label="Scan Item with AI" title="Scan Item with AI">
+      <span class="bbar-fab-icon">📷</span>
+    </button>
+
+    <button class="bottom-bar-item" id="bbar-found" onclick="viewFoundItems();">
+      <span class="bbar-icon">🟢</span>
+      <span class="bbar-label">Found (<span id="bbar-count-found">0</span>)</span>
+    </button>
+
+    <button class="bottom-bar-item" id="bbar-alerts" onclick="toggleNotificationDropdown(event);">
+      <span class="bbar-icon">🔔</span>
+      <span class="bbar-label">Alerts</span>
+    </button>
+  </nav>
 
   <!-- Main Container -->
   <main class="main-content">
@@ -123,30 +221,28 @@
         </h1>
 
         <p class="hero-description">
-          Upload a photo, tell us a few details, and our AI will find the closest matches across your campus.
+          Scan a photo or report details. Our AI detects brand, color, and object category to match items instantly across campus.
         </p>
 
+        <!-- 3 Clear Action Buttons in Hero -->
         <div class="hero-buttons">
+          <button class="btn btn-purple hero-btn btn-hero-scan" onclick="openScanModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span>Scan Item 📷</span>
+          </button>
+
           <button class="btn btn-yellow hero-btn" onclick="openLostModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            Find My Lost Item
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
+            <span>🔴 Report Lost</span>
           </button>
 
           <button class="btn btn-white hero-btn" onclick="openFoundModal()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-            Report Found Item
+            <span>🟢 Report Found</span>
           </button>
+        </div>
+      </div>         </button>
         </div>
       </div>
 
@@ -605,6 +701,105 @@
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
 
+  <!-- Modal: Scan Item AI Vision Scanner -->
+  <div id="scan-modal" class="modal-overlay">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('scan-modal')">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-badge purple-badge">📷 AI Vision Scanner</span>
+        <h2>Scan Campus Item</h2>
+        <p>Upload or take a photo. AI will instantly detect item name, category, brand, and color.</p>
+      </div>
+
+      <!-- Scanner Dropzone -->
+      <div class="dropzone scanner-dropzone" id="scanner-dropzone" onclick="triggerPhotoUpload('scanner-photo-input', event)">
+        <input type="file" id="scanner-photo-input" accept="image/*" capture="environment" style="display:none;" onchange="handleScannerImageUpload(event)">
+        <div class="dropzone-content" id="scanner-preview">
+          <div class="scanner-camera-icon">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#9333EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+          </div>
+          <p><strong>Click to Scan / Take Photo</strong> or drag and drop</p>
+          <span>AI automatically detects and auto-fills item details</span>
+        </div>
+      </div>
+
+      <!-- Quick Sample Demos for instant 1-click scanning test -->
+      <div class="scanner-samples-group" id="scanner-samples-group">
+        <span class="scanner-samples-label">Or test with quick sample items:</span>
+        <div class="scanner-samples-chips">
+          <button type="button" class="sample-chip" onclick="simulateScanSample('airpods')">🎧 AirPods Pro</button>
+          <button type="button" class="sample-chip" onclick="simulateScanSample('hydroflask')">🍶 Hydro Flask</button>
+          <button type="button" class="sample-chip" onclick="simulateScanSample('backpack')">🎒 North Face Bag</button>
+          <button type="button" class="sample-chip" onclick="simulateScanSample('macbook')">💻 MacBook Laptop</button>
+          <button type="button" class="sample-chip" onclick="simulateScanSample('sunglasses')">🕶️ Sunglasses</button>
+          <button type="button" class="sample-chip" onclick="simulateScanSample('keys')">🔑 Campus Keys</button>
+        </div>
+      </div>
+
+      <!-- AI Scanning Laser Animation Box -->
+      <div id="scanner-animation-box" class="scanner-anim-box" style="display: none;">
+        <div class="scanner-radar">
+          <div class="scanner-laser-bar"></div>
+        </div>
+        <div class="scanner-anim-text">
+          <span id="scanner-status-text">🤖 Analyzing visual features...</span>
+          <span id="scanner-status-pct">0%</span>
+        </div>
+        <div class="scan-bar">
+          <div id="scanner-bar-fill" class="scan-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- AI Detected Results Box -->
+      <div id="scanner-results-box" class="scanner-results-container" style="display: none;">
+        <div class="scanner-results-header">
+          <span class="scan-success-badge">✓ 98% AI Vision Confidence</span>
+          <h3>AI Detected Information</h3>
+        </div>
+
+        <div class="detected-fields-grid">
+          <div class="detected-field">
+            <span class="detected-label">📦 Item Name</span>
+            <strong id="det-name" class="detected-val">Apple AirPods Pro 2nd Gen Case</strong>
+          </div>
+          <div class="detected-field">
+            <span class="detected-label">📁 Category</span>
+            <strong id="det-cat" class="detected-val">Electronics</strong>
+          </div>
+          <div class="detected-field">
+            <span class="detected-label">🏷️ Brand</span>
+            <strong id="det-brand" class="detected-val">Apple</strong>
+          </div>
+          <div class="detected-field">
+            <span class="detected-label">🎨 Color</span>
+            <strong id="det-color" class="detected-val">White</strong>
+          </div>
+        </div>
+
+        <div class="detected-field full-width">
+          <span class="detected-label">📝 Detected Features / Markings</span>
+          <span id="det-notes" class="detected-val-text">Wireless charging case with front LED status light and lanyard loop.</span>
+        </div>
+
+        <div class="scanner-choice-heading">Select what you want to report:</div>
+        <div class="scanner-choice-buttons">
+          <button type="button" class="btn btn-yellow choice-btn" onclick="confirmScanAndProceed('lost')">
+            <span style="font-size: 1.1rem;">🔴</span>
+            <span>Confirm & Report Lost</span>
+          </button>
+          <button type="button" class="btn btn-green choice-btn" onclick="confirmScanAndProceed('found')">
+            <span style="font-size: 1.1rem;">🟢</span>
+            <span>Confirm & Report Found</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Report Lost Item / Find Item -->
   <div id="lost-modal" class="modal-overlay">
     <div class="modal-card">
@@ -734,6 +929,18 @@
           </div>
         </div>
 
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="lost-user-name">👤 Your Name</label>
+            <input type="text" id="lost-user-name" placeholder="e.g. Rahul Sharma" required>
+          </div>
+
+          <div class="form-group">
+            <label for="lost-whatsapp">📱 WhatsApp Number <span class="hint-text">(Kept Private)</span></label>
+            <input type="tel" id="lost-whatsapp" placeholder="e.g. +91 9876543210" required>
+          </div>
+        </div>
+
         <!-- AI Progress Scanner Bar -->
         <div id="ai-scan-progress" class="scan-progress-box" style="display: none;">
           <div class="scan-status-text">
@@ -842,6 +1049,18 @@
         <div class="form-group">
           <label for="found-notes">Turned into / Notes</label>
           <input type="text" id="found-notes" placeholder="e.g. Handed over to Library Front Desk">
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="found-user-name">👤 Your Name</label>
+            <input type="text" id="found-user-name" placeholder="e.g. Ananya Patel" required>
+          </div>
+
+          <div class="form-group">
+            <label for="found-whatsapp">📱 WhatsApp Number <span class="hint-text">(Kept Private)</span></label>
+            <input type="tel" id="found-whatsapp" placeholder="e.g. +91 9876543210" required>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-green modal-submit-btn">

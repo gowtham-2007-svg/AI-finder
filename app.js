@@ -16,7 +16,9 @@ let campusInventory = [
     date: '2026-08-22 10:20',
     timeAgo: '25 mins ago',
     image: 'assets/airpods_found.jpg',
-    notes: 'Found left on study table 14 with charging cable.'
+    notes: 'Found left on study table 14 with charging cable.',
+    userName: 'Security Desk',
+    whatsapp: '919876543210'
   },
   {
     id: 2,
@@ -30,7 +32,9 @@ let campusInventory = [
     date: '2026-08-22 09:55',
     timeAgo: '50 mins ago',
     image: 'assets/airpods_lost.jpg',
-    notes: 'Lost white case with small scratch on bottom hinge.'
+    notes: 'Lost white case with small scratch on bottom hinge.',
+    userName: 'Kavya S.',
+    whatsapp: '919876543211'
   },
   {
     id: 3,
@@ -44,7 +48,9 @@ let campusInventory = [
     date: '2026-08-22 09:00',
     timeAgo: '1 hour ago',
     image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=60',
-    notes: 'Has a small sticker of a mountain peak on the side.'
+    notes: 'Has a small sticker of a mountain peak on the side.',
+    userName: 'Cafe Counter Staff',
+    whatsapp: '919876543212'
   },
   {
     id: 4,
@@ -58,7 +64,9 @@ let campusInventory = [
     date: '2026-08-22 07:30',
     timeAgo: '3 hours ago',
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
-    notes: 'Contains notebooks and calculus study guides.'
+    notes: 'Contains notebooks and calculus study guides.',
+    userName: 'Rohan Mehta',
+    whatsapp: '919876543213'
   },
   {
     id: 5,
@@ -72,7 +80,9 @@ let campusInventory = [
     date: '2026-08-21 16:00',
     timeAgo: 'Yesterday',
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&auto=format&fit=crop&q=60',
-    notes: 'Handed to Canteen cashier desk.'
+    notes: 'Handed to Canteen cashier desk.',
+    userName: 'Canteen Cashier',
+    whatsapp: '919876543214'
   },
   {
     id: 6,
@@ -86,7 +96,9 @@ let campusInventory = [
     date: '2026-08-20 14:00',
     timeAgo: '2 days ago',
     image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&auto=format&fit=crop&q=60',
-    notes: 'Black frame in brown leather case.'
+    notes: 'Black frame in brown leather case.',
+    userName: 'Gym Staff',
+    whatsapp: '919876543215'
   },
   {
     id: 7,
@@ -100,7 +112,9 @@ let campusInventory = [
     date: '2026-08-20 11:30',
     timeAgo: '2 days ago',
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
-    notes: 'Has coding stickers on top cover.'
+    notes: 'Has coding stickers on top cover.',
+    userName: 'Vikram S.',
+    whatsapp: '919876543216'
   },
   {
     id: 8,
@@ -114,14 +128,11 @@ let campusInventory = [
     date: '2026-08-20 12:15',
     timeAgo: '2 days ago',
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60',
-    notes: 'Secured at Campus Main Gate Security Hub.'
+    notes: 'Secured at Campus Main Gate Security Hub.',
+    userName: 'Main Security Hub',
+    whatsapp: '919876543217'
   }
 ];
-
-// Active Directory State
-let currentDirectoryTab = 'all';
-let currentCategory = 'All';
-let selectedRoute = [];
 
 // Live Campus Notifications Data
 let campusNotifications = [
@@ -167,6 +178,15 @@ let campusNotifications = [
   }
 ];
 
+// Active State
+let currentDirectoryTab = 'all';
+let currentCategory = 'All';
+let selectedRoute = [];
+let uploadedImages = {
+  'lost-preview': null,
+  'found-preview': null
+};
+
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   renderNotifications();
@@ -174,6 +194,213 @@ document.addEventListener('DOMContentLoaded', () => {
   renderInventory(campusInventory);
   animateStatsCounters();
 });
+
+// Toast notification helper
+function showToast(message) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC700" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+    <span>${message}</span>
+  `;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// Navigation Tab Management
+function setActiveNav(navId) {
+  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+  const activeLink = document.getElementById(`nav-${navId}`);
+  if (activeLink) activeLink.classList.add('active');
+}
+
+function switchTab(tabId) {
+  setActiveNav(tabId);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function viewLostItems() {
+  setActiveNav('lost-items');
+  switchDirectoryTab('lost');
+  scrollToSection('directory-section');
+  showToast('Showing all reported Lost Items');
+}
+
+function viewFoundItems() {
+  setActiveNav('found-items');
+  switchDirectoryTab('found');
+  scrollToSection('directory-section');
+  showToast('Showing all reported Found Items');
+}
+
+// Mobile Navigation Drawer Toggle
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobile-nav-drawer');
+  const overlay = document.getElementById('mobile-drawer-overlay');
+  if (!drawer || !overlay) return;
+
+  const isOpen = drawer.classList.contains('active');
+  if (isOpen) {
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    drawer.classList.add('active');
+    overlay.classList.add('active');
+    updateDirectoryCounts();
+  }
+}
+
+// FAQ Accordion Toggle
+function toggleFaq(element) {
+  element.classList.toggle('open');
+}
+
+// Modal Control
+function openLostModal() {
+  document.getElementById('lost-modal').classList.add('active');
+  const dateInput = document.getElementById('lost-date');
+  if (dateInput && !dateInput.value) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    dateInput.value = now.toISOString().slice(0, 16);
+  }
+}
+
+function openFoundModal() {
+  document.getElementById('found-modal').classList.add('active');
+  const dateInput = document.getElementById('found-date');
+  if (dateInput && !dateInput.value) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    dateInput.value = now.toISOString().slice(0, 16);
+  }
+}
+
+function openSearchModal() {
+  document.getElementById('search-modal').classList.add('active');
+  renderInventory(campusInventory);
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.classList.remove('active');
+  const scanProgress = document.getElementById('ai-scan-progress');
+  if (scanProgress) scanProgress.style.display = 'none';
+}
+
+// Close modals when clicking background overlay
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+    }
+  });
+});
+
+// Safe trigger for photo file input
+function triggerPhotoUpload(inputId, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  const fileInput = document.getElementById(inputId);
+  if (fileInput) {
+    fileInput.click();
+  }
+}
+
+// File upload preview handler with smart AI auto-fill
+function handleFileSelect(event, previewId) {
+  if (event) event.stopPropagation();
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedImages[previewId] = e.target.result;
+      const container = document.getElementById(previewId);
+      if (container) {
+        container.innerHTML = `
+          <img src="${e.target.result}" alt="Preview" style="max-height: 120px; border-radius: 10px; object-fit: contain;">
+          <p style="margin-top: 6px; font-weight: 600; font-size: 0.85rem; color: #059669;">✓ ${file.name} Loaded & AI Analyzed</p>
+        `;
+      }
+
+      // Auto-fill fields if empty
+      const nameLower = file.name.toLowerCase();
+      let detected = scanPresets.airpods;
+      if (nameLower.includes('hydro') || nameLower.includes('bottle') || nameLower.includes('water')) detected = scanPresets.hydroflask;
+      else if (nameLower.includes('bag') || nameLower.includes('pack')) detected = scanPresets.backpack;
+      else if (nameLower.includes('mac') || nameLower.includes('laptop')) detected = scanPresets.macbook;
+      else if (nameLower.includes('sun') || nameLower.includes('glass')) detected = scanPresets.sunglasses;
+      else if (nameLower.includes('key') || nameLower.includes('id')) detected = scanPresets.keys;
+
+      if (previewId === 'lost-preview') {
+        const titleEl = document.getElementById('lost-title');
+        if (titleEl && !titleEl.value) {
+          titleEl.value = detected.title;
+          document.getElementById('lost-category').value = detected.category;
+          document.getElementById('lost-brand').value = detected.brand;
+          document.getElementById('lost-color').value = detected.color;
+          document.getElementById('lost-notes').value = detected.notes;
+          showToast(`✨ AI detected & auto-filled details from "${file.name}"!`);
+        }
+      } else if (previewId === 'found-preview') {
+        const titleEl = document.getElementById('found-title');
+        if (titleEl && !titleEl.value) {
+          titleEl.value = detected.title;
+          document.getElementById('found-category').value = detected.category;
+          document.getElementById('found-brand').value = detected.brand;
+          document.getElementById('found-color').value = detected.color;
+          document.getElementById('found-notes').value = detected.notes;
+          showToast(`✨ AI detected & auto-filled details from "${file.name}"!`);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+    showToast(`Photo "${file.name}" uploaded!`);
+  }
+}
+
+// Campus Route Builder Functions
+function addRouteLocation(locationName, event) {
+  if (event) event.stopPropagation();
+  selectedRoute.push(locationName);
+  updateRouteDisplay();
+  showToast(`Added ${locationName} to your campus route`);
+}
+
+function clearCampusRoute(event) {
+  if (event) event.stopPropagation();
+  selectedRoute = [];
+  updateRouteDisplay();
+  showToast('Campus route cleared');
+}
+
+function updateRouteDisplay() {
+  const container = document.getElementById('route-display-box');
+  if (!container) return;
+  if (selectedRoute.length === 0) {
+    container.innerHTML = `<span class="route-placeholder">Select your route sequence below (e.g. Classroom → Canteen → Library)</span>`;
+  } else {
+    container.innerHTML = selectedRoute.map((loc, index) => `
+      <span class="route-pill">${loc}</span>
+      ${index < selectedRoute.length - 1 ? '<span class="route-arrow">→</span>' : ''}
+    `).join('');
+  }
+}
 
 // ==========================================================================
 // Notifications Dropdown Logic
@@ -275,166 +502,6 @@ function viewAllMatchesFromNotif(event) {
   scrollToSection('directory-section');
 }
 
-// Toast notification helper
-function showToast(message) {
-  const container = document.getElementById('toast-container');
-  if (!container) return;
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC700" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-    <span>${message}</span>
-  `;
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px)';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
-}
-
-// Navigation Tab Management
-function setActiveNav(navId) {
-  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-  const activeLink = document.getElementById(`nav-${navId}`);
-  if (activeLink) activeLink.classList.add('active');
-}
-
-function switchTab(tabId) {
-  setActiveNav(tabId);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function scrollToSection(sectionId) {
-  const section = document.getElementById(sectionId);
-  if (section) {
-    section.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-function viewLostItems() {
-  setActiveNav('lost-items');
-  switchDirectoryTab('lost');
-  scrollToSection('directory-section');
-  showToast('Showing all reported Lost Items');
-}
-
-function viewFoundItems() {
-  setActiveNav('found-items');
-  switchDirectoryTab('found');
-  scrollToSection('directory-section');
-  showToast('Showing all reported Found Items');
-}
-
-// FAQ Accordion Toggle
-function toggleFaq(element) {
-  element.classList.toggle('open');
-}
-
-// Modal Control
-function openLostModal() {
-  document.getElementById('lost-modal').classList.add('active');
-  const dateInput = document.getElementById('lost-date');
-  if (dateInput && !dateInput.value) {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    dateInput.value = now.toISOString().slice(0, 16);
-  }
-}
-
-function openFoundModal() {
-  document.getElementById('found-modal').classList.add('active');
-  const dateInput = document.getElementById('found-date');
-  if (dateInput && !dateInput.value) {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    dateInput.value = now.toISOString().slice(0, 16);
-  }
-}
-
-function openSearchModal() {
-  document.getElementById('search-modal').classList.add('active');
-  renderInventory(campusInventory);
-}
-
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) modal.classList.remove('active');
-  const scanProgress = document.getElementById('ai-scan-progress');
-  if (scanProgress) scanProgress.style.display = 'none';
-}
-
-// Close modals when clicking background overlay
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      overlay.classList.remove('active');
-    }
-  });
-});
-
-// Safe trigger for photo file input
-function triggerPhotoUpload(inputId, event) {
-  if (event) {
-    event.stopPropagation();
-  }
-  const fileInput = document.getElementById(inputId);
-  if (fileInput) {
-    fileInput.click();
-  }
-}
-
-// File upload preview handler
-function handleFileSelect(event, previewId) {
-  if (event) event.stopPropagation();
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const container = document.getElementById(previewId);
-      if (container) {
-        container.innerHTML = `
-          <img src="${e.target.result}" alt="Preview" style="max-height: 120px; border-radius: 10px; object-fit: contain;">
-          <p style="margin-top: 6px; font-weight: 600; font-size: 0.85rem; color: #059669;">✓ ${file.name} Loaded</p>
-        `;
-      }
-    };
-    reader.readAsDataURL(file);
-    showToast(`Photo "${file.name}" uploaded successfully!`);
-  }
-}
-
-// ==========================================================================
-// Campus Route Builder Functions
-// ==========================================================================
-function addRouteLocation(locationName, event) {
-  if (event) event.stopPropagation();
-  selectedRoute.push(locationName);
-  updateRouteDisplay();
-  showToast(`Added ${locationName} to your campus route`);
-}
-
-function clearCampusRoute(event) {
-  if (event) event.stopPropagation();
-  selectedRoute = [];
-  updateRouteDisplay();
-  showToast('Campus route cleared');
-}
-
-function updateRouteDisplay() {
-  const container = document.getElementById('route-display-box');
-  if (!container) return;
-  if (selectedRoute.length === 0) {
-    container.innerHTML = `<span class="route-placeholder">Select your route sequence below (e.g. Classroom → Canteen → Library)</span>`;
-  } else {
-    container.innerHTML = selectedRoute.map((loc, index) => `
-      <span class="route-pill">${loc}</span>
-      ${index < selectedRoute.length - 1 ? '<span class="route-arrow">→</span>' : ''}
-    `).join('');
-  }
-}
-
 // ==========================================================================
 // Public Directory & AI Matching Engine
 // ==========================================================================
@@ -455,11 +522,25 @@ function updateDirectoryCounts() {
   if (countFoundEl) countFoundEl.innerText = foundCount;
   if (countMatchesEl) countMatchesEl.innerText = matchesCount;
 
-  // Update Navbar live count badges
+  // Update Navbar live count badges (e.g. Lost Items 3 -> Lost Items 4)
   const navLostEl = document.getElementById('nav-count-lost');
   const navFoundEl = document.getElementById('nav-count-found');
   if (navLostEl) navLostEl.innerText = lostCount;
   if (navFoundEl) navFoundEl.innerText = foundCount;
+
+  // Update Mobile Drawer count badges
+  const drawerLostEl = document.getElementById('drawer-count-lost');
+  const drawerFoundEl = document.getElementById('drawer-count-found');
+  const drawerMatchesEl = document.getElementById('drawer-count-matches');
+  if (drawerLostEl) drawerLostEl.innerText = lostCount;
+  if (drawerFoundEl) drawerFoundEl.innerText = foundCount;
+  if (drawerMatchesEl) drawerMatchesEl.innerText = matchesCount;
+
+  // Update Mobile Bottom Bar badges
+  const bbarLostEl = document.getElementById('bbar-count-lost');
+  const bbarFoundEl = document.getElementById('bbar-count-found');
+  if (bbarLostEl) bbarLostEl.innerText = lostCount;
+  if (bbarFoundEl) bbarFoundEl.innerText = foundCount;
 }
 
 function switchDirectoryTab(tabName) {
@@ -584,27 +665,51 @@ function renderDirectoryCards(items) {
 
           <div class="item-privacy-note">
             <span>🔒</span>
-            <span>Contact & student ID kept private until verified</span>
+            <span>Phone number hidden for privacy</span>
           </div>
 
           <div class="item-card-actions-row">
-            <button type="button" class="btn ${isLost ? 'btn-white' : 'btn-yellow'}" style="flex: 1;" onclick="openClaimModal(${item.id})">
-              ${isLost ? '🤝 I Found This' : '🏷️ Claim Item'}
+            <!-- WhatsApp Direct Contact Button -->
+            <button type="button" class="btn-whatsapp-chat" onclick="openWhatsAppChat(${item.id})">
+              <span>💬 Contact on WhatsApp</span>
             </button>
-            <button type="button" class="item-card-share-btn" title="Share this item report" onclick="openShareModal(${item.id})">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-              </svg>
-            </button>
+
+            <div class="item-card-buttons-split">
+              <button type="button" class="btn ${isLost ? 'btn-white' : 'btn-yellow'}" style="flex: 1; padding: 10px 14px; font-size: 0.86rem;" onclick="openClaimModal(${item.id})">
+                ${isLost ? '🤝 I Found This' : '🏷️ Claim Item'}
+              </button>
+              <button type="button" class="item-card-share-btn" title="Share this item report" onclick="openShareModal(${item.id})">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+// Open direct WhatsApp chat with pre-filled message (Phone number not exposed in UI)
+function openWhatsAppChat(itemId) {
+  const item = campusInventory.find(i => i.id === itemId);
+  if (!item) return;
+
+  const rawNumber = item.whatsapp || '919876543210';
+  const cleanNumber = rawNumber.replace(/[^\d]/g, '');
+  const isLost = item.type === 'lost';
+
+  const message = encodeURIComponent(
+    `Hello ${item.userName || ''}! I am contacting you regarding your ${isLost ? 'lost' : 'found'} item "${item.title}" (${item.brand || ''} ${item.color || ''}) reported at ${item.locationDetail || item.location} on CampusFind AI.`
+  );
+
+  window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
+  showToast(`💬 Opening WhatsApp to contact regarding "${item.title}"...`);
 }
 
 // Compute AI Pair Matches between Lost items and Found items
@@ -692,8 +797,11 @@ function renderAIMatches(matches) {
         <div style="display:flex; flex-direction:column; gap:3px;">
           ${match.reasons.map(r => `<span class="match-reason-tag">✓ ${r}</span>`).join('')}
         </div>
-        <button type="button" class="btn btn-yellow" style="font-size:0.82rem; padding:6px 14px; margin-top:4px;" onclick="openClaimModal(${match.foundItem.id})">
-          Verify & Connect
+        <button type="button" class="btn-whatsapp-chat" style="padding: 6px 14px; font-size: 0.82rem; margin-top: 6px;" onclick="openWhatsAppChat(${match.lostItem.id})">
+          💬 Contact on WhatsApp
+        </button>
+        <button type="button" class="btn btn-yellow" style="font-size:0.8rem; padding:6px 12px; margin-top:4px;" onclick="openClaimModal(${match.foundItem.id})">
+          Verify & Claim
         </button>
       </div>
 
@@ -713,7 +821,7 @@ function renderAIMatches(matches) {
 }
 
 // ==========================================================================
-// Form Submissions Handlers
+// Form Submissions Handlers with Instant Live Update
 // ==========================================================================
 
 // Handle AI Lost Submit Scan Process
@@ -727,6 +835,9 @@ function handleLostSubmit(event) {
   const lastRemembered = document.getElementById('last-remembered-loc')?.value || 'Library';
   const dateVal = document.getElementById('lost-date')?.value || new Date().toLocaleString();
   const notes = document.getElementById('lost-notes')?.value || '';
+  const userName = document.getElementById('lost-user-name')?.value || 'Anonymous Student';
+  const whatsapp = document.getElementById('lost-whatsapp')?.value || '919876543210';
+  const image = uploadedImages['lost-preview'] || 'assets/airpods_lost.jpg';
 
   const submitBtn = document.getElementById('lost-submit-btn');
   const progressBox = document.getElementById('ai-scan-progress');
@@ -754,14 +865,29 @@ function handleLostSubmit(event) {
           brand: brand,
           color: color,
           location: lastRemembered,
-          locationDetail: `${lastRemembered} (Last Seen Route)`,
+          locationDetail: `${lastRemembered} (Last Seen)`,
           date: dateVal,
           timeAgo: 'Just now',
-          image: 'assets/airpods_lost.jpg',
-          notes: notes
+          image: image,
+          notes: notes,
+          userName: userName,
+          whatsapp: whatsapp
         };
 
         campusInventory.unshift(newItem);
+
+        // Reset form
+        document.getElementById('lost-form').reset();
+        uploadedImages['lost-preview'] = null;
+        document.getElementById('lost-preview').innerHTML = `
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <p><strong>Click to upload photo</strong> or drag and drop</p>
+          <span>SVG, PNG, JPG (max 5MB)</span>
+        `;
 
         closeModal('lost-modal');
         submitBtn.disabled = false;
@@ -772,16 +898,14 @@ function handleLostSubmit(event) {
         const estimatedLocations = calculateAIEstimatedLocations(lastRemembered, selectedRoute);
         renderAIEstimatedLocations(estimatedLocations);
 
-        // Update Public Directory
-        renderPublicDirectory();
-
-        // Scroll to Public Directory
+        // Instant Live Update: Switch to Lost Items tab and update counts
+        switchDirectoryTab('lost');
         scrollToSection('directory-section');
 
-        showToast(`🎉 "${title}" posted to Lost Items & queued for real-time AI Matching!`);
+        showToast(`🎉 "${title}" saved and automatically added to Lost Items!`);
       }, 400);
     }
-  }, 40);
+  }, 35);
 }
 
 // Handle Found Item Submit
@@ -794,6 +918,9 @@ function handleFoundSubmit(event) {
   const loc = document.getElementById('found-location')?.value || 'Library';
   const dateVal = document.getElementById('found-date')?.value || new Date().toLocaleString();
   const notes = document.getElementById('found-notes')?.value || '';
+  const userName = document.getElementById('found-user-name')?.value || 'Anonymous Student';
+  const whatsapp = document.getElementById('found-whatsapp')?.value || '919876543210';
+  const image = uploadedImages['found-preview'] || 'assets/airpods_found.jpg';
 
   const newItem = {
     id: Date.now(),
@@ -806,17 +933,32 @@ function handleFoundSubmit(event) {
     locationDetail: `${loc} Area`,
     date: dateVal,
     timeAgo: 'Just now',
-    image: 'assets/airpods_found.jpg',
-    notes: notes
+    image: image,
+    notes: notes,
+    userName: userName,
+    whatsapp: whatsapp
   };
 
   campusInventory.unshift(newItem);
 
+  // Reset form
+  document.getElementById('found-form').reset();
+  uploadedImages['found-preview'] = null;
+  document.getElementById('found-preview').innerHTML = `
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+      <circle cx="12" cy="13" r="4"></circle>
+    </svg>
+    <p><strong>Upload photo of found item</strong></p>
+    <span>Helps AI generate instant feature embeddings</span>
+  `;
+
   closeModal('found-modal');
-  renderPublicDirectory();
+  // Instant Live Update: Switch to Found Items tab and update counts
+  switchDirectoryTab('found');
   scrollToSection('directory-section');
 
-  showToast(`✅ Thank you! "${title}" added to Public Found Items.`);
+  showToast(`✅ Thank you! "${title}" saved and automatically added to Found Items.`);
 }
 
 // AI Location Estimation Logic
@@ -891,9 +1033,7 @@ function renderAIEstimatedLocations(estimatedLocations) {
   `;
 }
 
-// ==========================================================================
 // Secure Claim Verification Modal Handler
-// ==========================================================================
 function openClaimModal(itemId) {
   const item = campusInventory.find(i => i.id === itemId);
   if (!item) return;
@@ -967,8 +1107,8 @@ function renderInventory(items) {
       </div>
       <div class="item-title">${item.title}</div>
       <div class="item-loc">📍 ${item.locationDetail || item.location} • <span style="color:#94A3B8;">${item.timeAgo || 'Recent'}</span></div>
-      <button class="btn btn-yellow" style="padding: 8px 14px; font-size: 0.82rem; margin-top: 4px;" onclick="openClaimModal(${item.id})">
-        ${item.type === 'lost' ? '🤝 I Found This' : 'Claim Item'}
+      <button class="btn-whatsapp-chat" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 4px;" onclick="openWhatsAppChat(${item.id})">
+        💬 Contact on WhatsApp
       </button>
     </div>
   `).join('');
@@ -1121,3 +1261,228 @@ function shareViaEmail() {
   const body = encodeURIComponent(`${currentShareData.text}\n\nView details here: ${currentShareData.url}`);
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 }
+
+// ==========================================================================
+// Scan Item 📷 AI Vision Scanner & Auto-Fill System
+// ==========================================================================
+
+const scanPresets = {
+  airpods: {
+    title: 'Apple AirPods Pro 2nd Gen Case',
+    category: 'Electronics',
+    brand: 'Apple',
+    color: 'White',
+    notes: 'Wireless charging case with front LED indicator & lanyard loop.',
+    image: 'assets/airpods_lost.jpg'
+  },
+  hydroflask: {
+    title: 'Hydro Flask Wide Mouth Bottle (32oz)',
+    category: 'Other',
+    brand: 'Hydro Flask',
+    color: 'Blue',
+    notes: 'Stainless steel insulated flask with flex strap lid.',
+    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&auto=format&fit=crop&q=60'
+  },
+  backpack: {
+    title: 'The North Face Borealis Backpack',
+    category: 'Bags',
+    brand: 'The North Face',
+    color: 'Black',
+    notes: 'Black nylon backpack with front bungee system and laptop compartment.',
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60'
+  },
+  macbook: {
+    title: 'MacBook Air M2 13-inch (Silver)',
+    category: 'Electronics',
+    brand: 'Apple',
+    color: 'Silver',
+    notes: 'Silver unibody laptop with MagSafe charging port.',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60'
+  },
+  sunglasses: {
+    title: 'Ray-Ban Wayfarer Polarized Sunglasses',
+    category: 'Clothing',
+    brand: 'Ray-Ban',
+    color: 'Black',
+    notes: 'Classic black frame with green lenses and protective case.',
+    image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&auto=format&fit=crop&q=60'
+  },
+  keys: {
+    title: 'Student ID & Dorm Key Lanyard',
+    category: 'Keys',
+    brand: 'University ID',
+    color: 'Blue',
+    notes: 'Blue woven campus strap with dormitory key and RFID access badge.',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&auto=format&fit=crop&q=60'
+  }
+};
+
+let currentScanResult = null;
+
+function openScanModal() {
+  const modal = document.getElementById('scan-modal');
+  if (!modal) return;
+
+  // Reset scanner state
+  const animBox = document.getElementById('scanner-animation-box');
+  const resultsBox = document.getElementById('scanner-results-box');
+  const preview = document.getElementById('scanner-preview');
+
+  if (animBox) animBox.style.display = 'none';
+  if (resultsBox) resultsBox.style.display = 'none';
+  if (preview) {
+    preview.innerHTML = `
+      <div class="scanner-camera-icon">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#9333EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </div>
+      <p><strong>Click to Scan / Take Photo</strong> or drag and drop</p>
+      <span>AI automatically detects and auto-fills item details</span>
+    `;
+  }
+
+  currentScanResult = null;
+  modal.classList.add('active');
+}
+
+function handleScannerImageUpload(event) {
+  if (event) event.stopPropagation();
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const imgSrc = e.target.result;
+    const preview = document.getElementById('scanner-preview');
+    if (preview) {
+      preview.innerHTML = `
+        <img src="${imgSrc}" alt="Scanned Item" style="max-height: 140px; border-radius: 12px; object-fit: contain;">
+        <p style="margin-top: 6px; font-weight: 700; color: #7E22CE;">📸 ${file.name} Uploaded</p>
+      `;
+    }
+
+    // Infer best matching sample preset or generate detection
+    const nameLower = file.name.toLowerCase();
+    let detected = scanPresets.airpods;
+    if (nameLower.includes('hydro') || nameLower.includes('bottle') || nameLower.includes('water')) detected = scanPresets.hydroflask;
+    else if (nameLower.includes('bag') || nameLower.includes('pack')) detected = scanPresets.backpack;
+    else if (nameLower.includes('mac') || nameLower.includes('laptop')) detected = scanPresets.macbook;
+    else if (nameLower.includes('sun') || nameLower.includes('glass')) detected = scanPresets.sunglasses;
+    else if (nameLower.includes('key') || nameLower.includes('id')) detected = scanPresets.keys;
+
+    const dataToProcess = Object.assign({}, detected, { image: imgSrc });
+    runAIVisionAnalysis(dataToProcess);
+  };
+  reader.readAsDataURL(file);
+}
+
+function simulateScanSample(sampleKey) {
+  const sample = scanPresets[sampleKey] || scanPresets.airpods;
+  const preview = document.getElementById('scanner-preview');
+  if (preview) {
+    preview.innerHTML = `
+      <img src="${sample.image}" alt="${sample.title}" style="max-height: 140px; border-radius: 12px; object-fit: contain;">
+      <p style="margin-top: 6px; font-weight: 700; color: #7E22CE;">📸 Scanned Photo</p>
+    `;
+  }
+  runAIVisionAnalysis(sample);
+}
+
+function runAIVisionAnalysis(data) {
+  const animBox = document.getElementById('scanner-animation-box');
+  const resultsBox = document.getElementById('scanner-results-box');
+  const fill = document.getElementById('scanner-bar-fill');
+  const pct = document.getElementById('scanner-status-pct');
+  const statusText = document.getElementById('scanner-status-text');
+
+  if (resultsBox) resultsBox.style.display = 'none';
+  if (animBox) animBox.style.display = 'block';
+
+  let progress = 0;
+  const steps = [
+    '🤖 Detecting visual feature embeddings...',
+    '🎨 Extracting primary color vectors...',
+    '🏷️ Identifying manufacturer brand logos...',
+    '⚡ Matching campus lost & found database...'
+  ];
+
+  const interval = setInterval(() => {
+    progress += 6;
+    if (fill) fill.style.width = `${progress}%`;
+    if (pct) pct.innerText = `${progress}%`;
+
+    const stepIdx = Math.min(Math.floor((progress / 100) * steps.length), steps.length - 1);
+    if (statusText) statusText.innerText = steps[stepIdx];
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        if (animBox) animBox.style.display = 'none';
+
+        // Display results
+        currentScanResult = data;
+        document.getElementById('det-name').innerText = data.title;
+        document.getElementById('det-cat').innerText = data.category;
+        document.getElementById('det-brand').innerText = data.brand;
+        document.getElementById('det-color').innerText = data.color;
+        document.getElementById('det-notes').innerText = data.notes;
+
+        if (resultsBox) {
+          resultsBox.style.display = 'block';
+          resultsBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        showToast(`✨ AI detected: ${data.title} (${data.color}, ${data.brand})`);
+      }, 300);
+    }
+  }, 35);
+}
+
+function confirmScanAndProceed(type) {
+  if (!currentScanResult) return;
+
+  closeModal('scan-modal');
+
+  if (type === 'lost') {
+    openLostModal();
+    // Auto-fill lost form
+    document.getElementById('lost-title').value = currentScanResult.title;
+    document.getElementById('lost-category').value = currentScanResult.category;
+    document.getElementById('lost-brand').value = currentScanResult.brand;
+    document.getElementById('lost-color').value = currentScanResult.color;
+    document.getElementById('lost-notes').value = currentScanResult.notes;
+
+    uploadedImages['lost-preview'] = currentScanResult.image;
+    const preview = document.getElementById('lost-preview');
+    if (preview) {
+      preview.innerHTML = `
+        <img src="${currentScanResult.image}" alt="Auto-filled Photo" style="max-height: 120px; border-radius: 10px; object-fit: contain;">
+        <p style="margin-top: 6px; font-weight: 600; font-size: 0.85rem; color: #9333EA;">✨ AI Auto-Filled from Scanned Photo</p>
+      `;
+    }
+
+    showToast(`✨ AI details auto-filled into Report Lost! Please review and confirm.`);
+  } else if (type === 'found') {
+    openFoundModal();
+    // Auto-fill found form
+    document.getElementById('found-title').value = currentScanResult.title;
+    document.getElementById('found-category').value = currentScanResult.category;
+    document.getElementById('found-brand').value = currentScanResult.brand;
+    document.getElementById('found-color').value = currentScanResult.color;
+    document.getElementById('found-notes').value = currentScanResult.notes;
+
+    uploadedImages['found-preview'] = currentScanResult.image;
+    const preview = document.getElementById('found-preview');
+    if (preview) {
+      preview.innerHTML = `
+        <img src="${currentScanResult.image}" alt="Auto-filled Photo" style="max-height: 120px; border-radius: 10px; object-fit: contain;">
+        <p style="margin-top: 6px; font-weight: 600; font-size: 0.85rem; color: #059669;">✨ AI Auto-Filled from Scanned Photo</p>
+      `;
+    }
+
+    showToast(`✨ AI details auto-filled into Report Found! Please review and confirm.`);
+  }
+}
+
