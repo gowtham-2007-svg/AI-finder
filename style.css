@@ -2687,7 +2687,7 @@ body {
 /* Mobile Phones View (<= 768px) */
 @media (max-width: 768px) {
   body {
-    padding-bottom: 70px; /* space for mobile bottom bar */
+    padding-bottom: 74px; /* space for mobile bottom bar */
   }
 
   .mobile-bottom-bar {
@@ -2695,35 +2695,82 @@ body {
   }
 
   .header {
-    top: 8px;
-    padding: 0 12px;
+    top: 6px;
+    padding: 0 10px;
   }
 
   .header-container {
-    padding: 8px 16px;
+    padding: 8px 14px;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
   }
 
   .main-content {
-    padding: 0 16px;
+    padding: 0 14px;
+  }
+
+  .hero-section {
+    padding: 24px 0 20px 0;
+    gap: 24px;
   }
 
   .hero-title {
-    font-size: 2.2rem;
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .hero-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 18px;
+  }
+
+  .ai-demo-container {
+    padding: 18px 14px;
+    border-radius: 22px;
   }
 
   .ai-flow {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
   .flow-arrow {
     transform: rotate(90deg);
+    font-size: 1.3rem;
   }
 
   .stats-container {
     flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+    gap: 16px;
+    padding: 20px 16px;
+    border-radius: 20px;
   }
 
   .stat-divider {
@@ -2731,41 +2778,93 @@ body {
     height: 1px;
   }
 
+  .stat-number {
+    font-size: 2rem;
+  }
+
   .steps-grid, .features-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .section-title {
+    font-size: 1.65rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.9rem;
   }
 
   .directory-cards-grid {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 
+  /* Sleek Scrollable Tab Bar on Phone */
   .directory-tabs-bar {
-    flex-direction: column;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     width: 100%;
+    gap: 8px;
+    padding: 4px 4px 10px 4px;
+    border-radius: 16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .directory-tabs-bar::-webkit-scrollbar {
+    display: none;
   }
 
   .dir-tab {
-    width: 100%;
-    justify-content: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+
+  .dir-filter-panel {
+    padding: 16px;
+    border-radius: 18px;
   }
 
   .dir-filter-dropdowns {
     flex-direction: column;
+    gap: 10px;
   }
 
   .dir-filter-dropdowns select {
     width: 100%;
   }
 
+  .public-item-card {
+    border-radius: 20px;
+  }
+
+  .item-card-top-image {
+    height: 190px;
+  }
+
+  .item-card-body {
+    padding: 16px;
+  }
+
   .cta-banner {
     flex-direction: column;
     text-align: center;
-    gap: 20px;
-    padding: 24px 20px;
+    gap: 18px;
+    padding: 24px 16px;
+    border-radius: 22px;
   }
 
   .banner-left {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .banner-text h3 {
+    font-size: 1.3rem;
   }
 
   .footer-container {
@@ -2774,13 +2873,87 @@ body {
     text-align: center;
   }
 
+  .footer-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  /* Modals Phone Optimization */
   .modal-card {
-    padding: 24px 18px;
+    padding: 22px 16px;
     border-radius: 20px;
-    max-height: 85vh;
+    max-height: 90vh;
+    width: 95%;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 16px; /* prevent iOS auto-zoom */
+    padding: 12px 14px;
+  }
+
+  .campus-chips-container {
+    gap: 6px;
+  }
+
+  .campus-chip {
+    font-size: 0.76rem;
+    padding: 6px 10px;
+  }
+
+  .scanner-choice-buttons {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .detected-top-card {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .detected-img-wrap {
+    width: 100%;
+    height: 140px;
+  }
+
+  .notification-dropdown {
+    width: 300px;
+    right: -20px;
+  }
+}
+
+/* Extra Small Phones (<= 480px) */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .brand-name {
+    font-size: 0.98rem;
+  }
+
+  .header-container {
+    padding: 6px 12px;
+  }
+
+  .modal-card {
+    padding: 20px 14px;
+    width: 96%;
+  }
+
+  .scanner-samples-chips {
+    gap: 4px;
+  }
+
+  .sample-chip {
+    font-size: 0.72rem;
+    padding: 4px 8px;
   }
 }
