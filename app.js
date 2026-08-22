@@ -671,7 +671,7 @@ function renderDirectoryCards(items) {
           <div class="item-card-actions-row">
             <!-- WhatsApp Direct Contact Button -->
             <button type="button" class="btn-whatsapp-chat" onclick="openWhatsAppChat(${item.id})">
-              <span>💬 Contact on WhatsApp (+91 9019984669)</span>
+              <span>💬 Contact on WhatsApp</span>
             </button>
 
             <div class="item-card-buttons-split">
@@ -714,7 +714,7 @@ function openWhatsAppChat(itemId) {
   );
 
   window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
-  showToast(`💬 Opening WhatsApp (+91 9019984669) for "${item.title}"...`);
+  showToast(`💬 Opening WhatsApp for "${item.title}"...`);
 }
 
 // Compute AI Pair Matches between Lost items and Found items
@@ -1512,7 +1512,7 @@ function confirmScanAndProceed(type) {
   }
 }
 
-// Directly send scanned item details to WhatsApp (+91 9019984669)
+// Directly send scanned item details to WhatsApp
 function sendScannedItemToWhatsApp() {
   if (!currentScanResult) return;
   const cleanNumber = '919019984669';
@@ -1527,6 +1527,6 @@ function sendScannedItemToWhatsApp() {
     `Please assist with campus Lost & Found verification.`
   );
   window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
-  showToast(`💬 Opening WhatsApp (+91 9019984669) with scanned details...`);
+  showToast(`💬 Opening WhatsApp with scanned details...`);
 }
 
