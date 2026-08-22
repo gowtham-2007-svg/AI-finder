@@ -37,21 +37,62 @@
 
       <nav class="nav-menu">
         <a href="#home" class="nav-link active" id="nav-home" onclick="setActiveNav('home')">Home</a>
+        <a href="#directory-section" class="nav-link" id="nav-lost-items" onclick="viewLostItems()">
+          Lost Items <span class="nav-count-pill pill-lost" id="nav-count-lost">0</span>
+        </a>
+        <a href="#directory-section" class="nav-link" id="nav-found-items" onclick="viewFoundItems()">
+          Found Items <span class="nav-count-pill pill-found" id="nav-count-found">0</span>
+        </a>
         <a href="#report-lost" class="nav-link" id="nav-report-lost" onclick="openLostModal()">Report Lost</a>
         <a href="#report-found" class="nav-link" id="nav-report-found" onclick="openFoundModal()">Report Found</a>
-        <a href="#search" class="nav-link" id="nav-search" onclick="openSearchModal()">Search</a>
+        <a href="#search" class="nav-link" id="nav-search" onclick="openSearchModal()">Search AI</a>
         <a href="#how-it-works" class="nav-link" id="nav-how" onclick="scrollToSection('how-it-works')">How It Works</a>
         <a href="#faq" class="nav-link" id="nav-faq" onclick="scrollToSection('faq-section')">FAQ</a>
       </nav>
 
       <div class="header-actions">
-        <button class="icon-btn" aria-label="Notifications" onclick="showToast('No new notifications right now!')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        <!-- Share Button -->
+        <button type="button" class="icon-btn" aria-label="Share" title="Share CampusFind AI" onclick="openShareModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
           </svg>
-          <span class="notification-badge"></span>
         </button>
+
+        <div class="notification-wrapper">
+          <button type="button" class="icon-btn" id="notif-bell-btn" aria-label="Notifications" onclick="toggleNotificationDropdown(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notification-badge" id="notif-badge"></span>
+          </button>
+
+          <!-- Notification Dropdown Menu -->
+          <div class="notification-dropdown" id="notification-dropdown">
+            <div class="notif-dropdown-header">
+              <div class="notif-title-group">
+                <span class="notif-title">Notifications</span>
+                <span class="notif-count-badge" id="notif-unread-count">3 new</span>
+              </div>
+              <button type="button" class="notif-mark-read-btn" onclick="markAllNotificationsRead(event)">Mark all read</button>
+            </div>
+
+            <div class="notif-items-list" id="notif-items-list">
+              <!-- Dynamically populated by JS -->
+            </div>
+
+            <div class="notif-dropdown-footer">
+              <button type="button" class="notif-footer-btn" onclick="viewAllMatchesFromNotif(event)">
+                View All AI Matches →
+              </button>
+            </div>
+          </div>
+        </div>
+
         <button class="btn btn-yellow pill-btn" onclick="openLostModal()">
           Get Started 
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -423,6 +464,90 @@
       </div>
     </section>
 
+    <!-- Public Lost & Found Live Campus Directory Section -->
+    <section class="directory-section" id="directory-section">
+      <div class="section-header">
+        <div class="directory-badge">🏛️ Live Campus Database</div>
+        <h2 class="section-title">Public Campus <span class="highlight-orange">Lost & Found</span></h2>
+        <p class="section-subtitle">Browse recently reported lost items, found inventory, and automated AI match alerts across campus.</p>
+      </div>
+
+      <!-- Main Directory Navigation Tabs -->
+      <div class="directory-tabs-bar">
+        <button type="button" class="dir-tab active" id="tab-all" onclick="switchDirectoryTab('all')">
+          📁 All Items (<span id="count-all">0</span>)
+        </button>
+        <button type="button" class="dir-tab dir-tab-lost" id="tab-lost" onclick="switchDirectoryTab('lost')">
+          🔴 Lost Items (<span id="count-lost">0</span>)
+        </button>
+        <button type="button" class="dir-tab dir-tab-found" id="tab-found" onclick="switchDirectoryTab('found')">
+          🟢 Found Items (<span id="count-found">0</span>)
+        </button>
+        <button type="button" class="dir-tab dir-tab-matches" id="tab-matches" onclick="switchDirectoryTab('matches')">
+          🤖 AI Smart Matches (<span id="count-matches">0</span>)
+        </button>
+      </div>
+
+      <!-- Advanced Filter & Search Controls -->
+      <div class="directory-filter-panel">
+        <div class="dir-search-box">
+          <input type="text" id="dir-search-input" placeholder="Search by item name, brand, color, or location..." oninput="applyDirectoryFilters()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" class="dir-search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+
+        <div class="dir-filter-dropdowns">
+          <select id="dir-filter-category" onchange="applyDirectoryFilters()">
+            <option value="All">All Categories</option>
+            <option value="Electronics">🎧 Electronics</option>
+            <option value="Bags">🎒 Bags & Backpacks</option>
+            <option value="Keys">🔑 Keys & Badges</option>
+            <option value="Clothing">🕶️ Accessories</option>
+            <option value="Books">📚 Books & Notes</option>
+            <option value="Other">📦 Other Accessories</option>
+          </select>
+
+          <select id="dir-filter-location" onchange="applyDirectoryFilters()">
+            <option value="All">All Locations</option>
+            <option value="Library">Central Library</option>
+            <option value="Canteen">Campus Canteen</option>
+            <option value="Classroom">Classroom Block</option>
+            <option value="Auditorium">Auditorium</option>
+            <option value="Gym">Fitness Gym</option>
+            <option value="Campus Quad">Campus Quad</option>
+            <option value="Science Lab">Science Lab</option>
+            <option value="Student Cafe">Student Cafe</option>
+            <option value="IT Hub">IT Hub</option>
+            <option value="Sports Complex">Sports Complex</option>
+            <option value="Admin Office">Admin Office</option>
+            <option value="Bus Stop">Bus Stop</option>
+            <option value="Parking Lot">Parking Lot</option>
+            <option value="Hostel Lounge">Hostel Lounge</option>
+          </select>
+
+          <select id="dir-filter-color" onchange="applyDirectoryFilters()">
+            <option value="All">All Colors</option>
+            <option value="White">White</option>
+            <option value="Black">Black</option>
+            <option value="Blue">Blue</option>
+            <option value="Silver">Silver / Grey</option>
+            <option value="Red">Red</option>
+            <option value="Green">Green</option>
+            <option value="Yellow">Yellow / Gold</option>
+          </select>
+
+          <select id="dir-filter-sort" onchange="applyDirectoryFilters()">
+            <option value="newest">Sort: Newest First</option>
+            <option value="oldest">Sort: Oldest First</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Public Items Grid -->
+      <div class="directory-cards-grid" id="directory-cards-grid">
+        <!-- Dynamic Cards rendered by JS -->
+      </div>
+    </section>
+
     <!-- FAQ Section -->
     <section class="faq-section" id="faq-section">
       <div class="section-header">
@@ -488,13 +613,13 @@
       <div class="modal-header">
         <span class="modal-badge">🤖 AI Scanner</span>
         <h2>Find My Lost Item</h2>
-        <p>Upload a photo & details to search across all 12 campus locations.</p>
+        <p>Upload a photo & details to search across all campus locations.</p>
       </div>
 
       <form id="lost-form" onsubmit="handleLostSubmit(event)">
         
         <!-- Image Dropzone -->
-        <div class="dropzone" id="lost-dropzone" onclick="document.getElementById('lost-photo').click()">
+        <div class="dropzone" id="lost-dropzone" onclick="triggerPhotoUpload('lost-photo', event)">
           <input type="file" id="lost-photo" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'lost-preview')">
           <div class="dropzone-content" id="lost-preview">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -526,7 +651,28 @@
           </div>
         </div>
 
-        <!-- NEW: Where did you last remember having it? -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="lost-brand">Brand / Maker</label>
+            <input type="text" id="lost-brand" placeholder="e.g. Apple, Nike, Dell, Hydro Flask">
+          </div>
+
+          <div class="form-group">
+            <label for="lost-color">Primary Color</label>
+            <select id="lost-color">
+              <option value="White">White</option>
+              <option value="Black">Black</option>
+              <option value="Blue">Blue</option>
+              <option value="Silver">Silver / Grey</option>
+              <option value="Red">Red</option>
+              <option value="Green">Green</option>
+              <option value="Yellow">Yellow / Gold</option>
+              <option value="Other">Other / Multicolor</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Where did you last remember having it? -->
         <div class="form-group">
           <label for="last-remembered-loc">📍 Where did you last remember having it?</label>
           <select id="last-remembered-loc" class="form-control-select" required>
@@ -547,7 +693,7 @@
           </select>
         </div>
 
-        <!-- NEW: Where were you before losing it? (Campus Route Builder) -->
+        <!-- Where were you before losing it? (Campus Route Builder) -->
         <div class="form-group">
           <div class="label-with-hint">
             <label>🗺️ Where were you before losing it? <span class="hint-text">(Click locations in order)</span></label>
@@ -588,7 +734,7 @@
           </div>
         </div>
 
-        <!-- AI Progress Scanner Bar (Hidden by default) -->
+        <!-- AI Progress Scanner Bar -->
         <div id="ai-scan-progress" class="scan-progress-box" style="display: none;">
           <div class="scan-status-text">
             <span>🤖 AI Analyzing Campus Route & Locations...</span>
@@ -600,7 +746,7 @@
         </div>
 
         <button type="submit" class="btn btn-yellow modal-submit-btn" id="lost-submit-btn">
-          <span>Run AI Matching Scan</span>
+          <span>Run AI Matching Scan & Post to Lost Items</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
       </form>
@@ -620,7 +766,7 @@
 
       <form id="found-form" onsubmit="handleFoundSubmit(event)">
         
-        <div class="dropzone" id="found-dropzone" onclick="document.getElementById('found-photo').click()">
+        <div class="dropzone" id="found-dropzone" onclick="triggerPhotoUpload('found-photo', event)">
           <input type="file" id="found-photo" accept="image/*" style="display:none;" onchange="handleFileSelect(event, 'found-preview')">
           <div class="dropzone-content" id="found-preview">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -639,6 +785,41 @@
           </div>
 
           <div class="form-group">
+            <label for="found-category">Category</label>
+            <select id="found-category" required>
+              <option value="Electronics">Electronics & Audio</option>
+              <option value="Bags">Backpacks & Purses</option>
+              <option value="Keys">Keys & Badges</option>
+              <option value="Clothing">Clothing & Jackets</option>
+              <option value="Books">Books & Notebooks</option>
+              <option value="Other">Other Accessories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="found-brand">Brand / Maker</label>
+            <input type="text" id="found-brand" placeholder="e.g. Hydro Flask, Apple, Dell">
+          </div>
+
+          <div class="form-group">
+            <label for="found-color">Primary Color</label>
+            <select id="found-color">
+              <option value="Blue">Blue</option>
+              <option value="White">White</option>
+              <option value="Black">Black</option>
+              <option value="Silver">Silver / Grey</option>
+              <option value="Red">Red</option>
+              <option value="Green">Green</option>
+              <option value="Yellow">Yellow / Gold</option>
+              <option value="Other">Other / Multicolor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
             <label for="found-location">Found Location</label>
             <select id="found-location" required>
               <option value="Library">Central Library 2nd Floor</option>
@@ -647,12 +828,24 @@
               <option value="Auditorium">Auditorium Main Gate</option>
               <option value="Gym">Fitness Gym Desk</option>
               <option value="Campus Quad">Campus Quad Bench</option>
+              <option value="Science Lab">Science Lab 102</option>
+              <option value="Student Cafe">Student Cafe Lounge</option>
             </select>
+          </div>
+
+          <div class="form-group">
+            <label for="found-date">Date & Time Found</label>
+            <input type="datetime-local" id="found-date">
           </div>
         </div>
 
+        <div class="form-group">
+          <label for="found-notes">Turned into / Notes</label>
+          <input type="text" id="found-notes" placeholder="e.g. Handed over to Library Front Desk">
+        </div>
+
         <button type="submit" class="btn btn-green modal-submit-btn">
-          <span>Submit Found Item Report</span>
+          <span>Submit Found Item to Campus Directory</span>
         </button>
       </form>
     </div>
@@ -669,7 +862,7 @@
         <p>Real-time inventory across campus security hubs.</p>
       </div>
 
-      <!-- NEW: AI Estimated Locations Card Container -->
+      <!-- AI Estimated Locations Card Container -->
       <div id="ai-estimated-container" class="ai-estimated-box" style="display: none;">
         <!-- Dynamic content injected by app.js -->
       </div>
@@ -691,6 +884,102 @@
 
       <div class="inventory-grid" id="inventory-grid">
         <!-- Dynamic Items rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Secure Item Claim Verification -->
+  <div id="claim-modal" class="modal-overlay">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('claim-modal')">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-badge green-badge">🔒 Secure Verification</span>
+        <h2 id="claim-modal-title">Verify Ownership to Claim</h2>
+        <p>Your contact and identity remain 100% private. Complete verification for campus security pickup.</p>
+      </div>
+
+      <form id="claim-form" onsubmit="handleClaimVerificationSubmit(event)">
+        <input type="hidden" id="claim-item-id">
+        
+        <div class="form-group">
+          <label for="claim-student-id">Student ID / Roll Number</label>
+          <input type="text" id="claim-student-id" placeholder="e.g. STU-2026-8941" required>
+        </div>
+
+        <div class="form-group">
+          <label for="claim-proof">Ownership Proof / Unique Serial or Passcode</label>
+          <textarea id="claim-proof" rows="3" placeholder="Describe unique markings, serial number, device lock screen photo, or sticker locations..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="claim-pickup">Preferred Pickup Security Hub</label>
+          <select id="claim-pickup">
+            <option value="Library Desk">Central Library Security Desk</option>
+            <option value="Student Union Desk">Student Union Information Counter</option>
+            <option value="Main Security Hub">Campus Main Gate Security Gatehouse</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-yellow modal-submit-btn">
+          <span>Generate Secure Pickup Pass 🔐</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Share Campus Lost & Found / Item -->
+  <div id="share-modal" class="modal-overlay">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('share-modal')">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-badge">🔗 Share & Broadcast</span>
+        <h2 id="share-modal-title">Share Lost & Found</h2>
+        <p id="share-modal-desc">Share with classmates, campus WhatsApp groups, or social networks.</p>
+      </div>
+
+      <!-- Item Preview Snippet in Share Modal -->
+      <div id="share-item-preview" class="share-preview-card" style="display: none;">
+        <img id="share-preview-img" src="" alt="Preview" class="share-preview-thumb">
+        <div class="share-preview-info">
+          <strong id="share-preview-title">Item Title</strong>
+          <span id="share-preview-loc">📍 Location</span>
+        </div>
+      </div>
+
+      <!-- Copy Link Input Box -->
+      <div class="share-link-group">
+        <label>Direct Page / Item Link</label>
+        <div class="share-copy-box">
+          <input type="text" id="share-link-input" readonly value="">
+          <button type="button" class="btn btn-yellow" id="share-copy-btn" onclick="copyShareLink()">
+            <span id="copy-btn-text">Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Social Sharing Grid -->
+      <div class="share-buttons-grid">
+        <button type="button" class="share-channel-btn btn-whatsapp" onclick="shareToWhatsApp()">
+          <span class="share-channel-icon">💬</span>
+          <span>WhatsApp</span>
+        </button>
+
+        <button type="button" class="share-channel-btn btn-telegram" onclick="shareToTelegram()">
+          <span class="share-channel-icon">✈️</span>
+          <span>Telegram</span>
+        </button>
+
+        <button type="button" class="share-channel-btn btn-twitter" onclick="shareToTwitter()">
+          <span class="share-channel-icon">🐦</span>
+          <span>Twitter / X</span>
+        </button>
+
+        <button type="button" class="share-channel-btn btn-email" onclick="shareViaEmail()">
+          <span class="share-channel-icon">✉️</span>
+          <span>Campus Email</span>
+        </button>
       </div>
     </div>
   </div>
