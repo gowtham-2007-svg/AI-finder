@@ -780,17 +780,21 @@
           <p id="det-notes" class="detected-val-text">Wireless charging case with front LED status light and lanyard loop.</p>
         </div>
 
-        <div class="scanner-choice-heading">Where should we add this item?</div>
+        <div class="scanner-choice-heading">Quick Actions:</div>
         <div class="scanner-choice-buttons">
           <button type="button" class="btn btn-yellow choice-btn" onclick="confirmScanAndProceed('lost')">
             <span style="font-size: 1.1rem;">🔴</span>
-            <span>Confirm as Lost Item</span>
+            <span>Confirm as Lost</span>
           </button>
           <button type="button" class="btn btn-green choice-btn" onclick="confirmScanAndProceed('found')">
             <span style="font-size: 1.1rem;">🟢</span>
-            <span>Confirm as Found Item</span>
+            <span>Confirm as Found</span>
           </button>
         </div>
+
+        <button type="button" class="btn-whatsapp-chat" style="margin-top: 12px; padding: 13px 16px; font-size: 0.95rem; font-weight: 800;" onclick="sendScannedItemToWhatsApp()">
+          <span>💬 Send Scanned Item to WhatsApp (+91 9019984669)</span>
+        </button>
       </div>
     </div>
   </div>

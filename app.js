@@ -671,7 +671,7 @@ function renderDirectoryCards(items) {
           <div class="item-card-actions-row">
             <!-- WhatsApp Direct Contact Button -->
             <button type="button" class="btn-whatsapp-chat" onclick="openWhatsAppChat(${item.id})">
-              <span>💬 Contact on WhatsApp</span>
+              <span>💬 Contact on WhatsApp (+91 9019984669)</span>
             </button>
 
             <div class="item-card-buttons-split">
@@ -695,29 +695,26 @@ function renderDirectoryCards(items) {
   }).join('');
 }
 
-// Open direct WhatsApp chat with pre-filled message (Phone number not exposed in UI)
+// Open direct WhatsApp chat with pre-filled message
 function openWhatsAppChat(itemId) {
   const item = campusInventory.find(i => i.id === itemId);
   if (!item) return;
 
-  // Use 9019984669 with India country code 91 by default
-  let rawNumber = item.whatsapp || '9019984669';
-  let cleanNumber = rawNumber.replace(/[^\d]/g, '');
-  if (cleanNumber.length === 10) {
-    cleanNumber = '91' + cleanNumber;
-  }
-  if (!cleanNumber) {
-    cleanNumber = '919019984669';
-  }
-
+  const cleanNumber = '919019984669';
   const isLost = item.type === 'lost';
 
   const message = encodeURIComponent(
-    `Hello ${item.userName || ''}! I am contacting you regarding your ${isLost ? 'lost' : 'found'} item "${item.title}" (${item.brand || ''} ${item.color || ''}) reported at ${item.locationDetail || item.location} on CampusFind AI.`
+    `Hello! I am contacting you regarding the ${isLost ? '🔴 LOST' : '🟢 FOUND'} item:\n` +
+    `• Item: ${item.title}\n` +
+    `• Brand: ${item.brand || 'Unspecified'}\n` +
+    `• Color: ${item.color || 'Standard'}\n` +
+    `• Location: ${item.locationDetail || item.location}\n` +
+    `• Date/Time: ${item.date}\n` +
+    `Please assist me on CampusFind AI.`
   );
 
   window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
-  showToast(`💬 Opening WhatsApp to contact regarding "${item.title}"...`);
+  showToast(`💬 Opening WhatsApp (+91 9019984669) for "${item.title}"...`);
 }
 
 // Compute AI Pair Matches between Lost items and Found items
@@ -1513,5 +1510,23 @@ function confirmScanAndProceed(type) {
 
     showToast(`✨ AI details auto-filled into Report Found! Please review and confirm.`);
   }
+}
+
+// Directly send scanned item details to WhatsApp (+91 9019984669)
+function sendScannedItemToWhatsApp() {
+  if (!currentScanResult) return;
+  const cleanNumber = '919019984669';
+  const message = encodeURIComponent(
+    `Hello! I just scanned an item on CampusFind AI:\n\n` +
+    `📸 Scanned Item Report:\n` +
+    `• Item Name: ${currentScanResult.title}\n` +
+    `• Category: ${currentScanResult.category}\n` +
+    `• Brand: ${currentScanResult.brand}\n` +
+    `• Color: ${currentScanResult.color}\n` +
+    `• Details: ${currentScanResult.notes}\n\n` +
+    `Please assist with campus Lost & Found verification.`
+  );
+  window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
+  showToast(`💬 Opening WhatsApp (+91 9019984669) with scanned details...`);
 }
 
